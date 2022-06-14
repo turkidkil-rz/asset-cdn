@@ -1,5 +1,5 @@
 {
-    "name": "arubacao/asset-cdn",
+    "name": "mehedi/asset-cdn",
     "description": "Serve Laravel Assets from a Content Delivery Network (CDN)",
     "keywords": [
         "Laravel",
