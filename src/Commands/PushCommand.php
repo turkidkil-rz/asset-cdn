@@ -2,10 +2,10 @@
 
 namespace Arubacao\AssetCdn\Commands;
 
+use Illuminate\Http\File;
 use Arubacao\AssetCdn\Finder;
 use Illuminate\Config\Repository;
 use Illuminate\Filesystem\FilesystemManager;
-use Illuminate\Http\File;
 
 class PushCommand extends BaseCommand
 {
@@ -34,23 +34,21 @@ class PushCommand extends BaseCommand
      */
     public function handle(Finder $finder, FilesystemManager $filesystemManager, Repository $config)
     {
-        $files = $finder->getFiles();
+        $this->info("\nUploading files to CDN...\n");
 
-        foreach ($files as $file) {
-            $bool = $filesystemManager
-                ->disk($config->get('asset-cdn.filesystem.disk'))
-                ->putFileAs(
-                    $file->getRelativePath(),
-                    new File($file->getPathname()),
-                    $file->getFilename(),
-                    $config->get('asset-cdn.filesystem.options')
-                );
+        $this->withProgressBar($finder->getFiles(), function ($file) use ($filesystemManager, $config) {
+            async(function () use ($file, $filesystemManager, $config): bool {
+                return $filesystemManager
+                    ->disk($config->get('asset-cdn.filesystem.disk'))
+                    ->putFileAs(
+                        $file->getRelativePath(),
+                        new File($file->getPathname()),
+                        $file->getFilename(),
+                        $config->get('asset-cdn.filesystem.options')
+                    );
+            });
+        });
 
-            if (! $bool) {
-                $this->error("Problem uploading: {$file->getRelativePathname()}");
-            } else {
-                $this->info("Successfully uploaded: {$file->getRelativePathname()}");
-            }
-        }
+        $this->newLine(2);
     }
 }
