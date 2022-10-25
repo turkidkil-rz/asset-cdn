@@ -2,10 +2,8 @@
 
 namespace Arubacao\AssetCdn;
 
-use Arubacao\AssetCdn\Commands\EmptyCommand;
-use Arubacao\AssetCdn\Commands\PushCommand;
-use Arubacao\AssetCdn\Commands\SyncCommand;
 use Illuminate\Support\ServiceProvider;
+use Arubacao\AssetCdn\Commands\PushCommand;
 
 class AssetCdnServiceProvider extends ServiceProvider
 {
@@ -17,7 +15,7 @@ class AssetCdnServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/asset-cdn.php' => config_path('asset-cdn.php'),
+            __DIR__ . '/../config/asset-cdn.php' => config_path('asset-cdn.php'),
         ], 'config');
     }
 
@@ -28,20 +26,12 @@ class AssetCdnServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/asset-cdn.php', 'asset-cdn');
+        $this->mergeConfigFrom(__DIR__ . '/../config/asset-cdn.php', 'asset-cdn');
 
         $this->app->singleton(Finder::class, function ($app) {
             return new Finder(new Config($app->make('config'), $app->make('path.public')));
         });
 
-        $this->app->bind('command.asset-cdn:push', PushCommand::class);
-        $this->app->bind('command.asset-cdn:sync', SyncCommand::class);
-        $this->app->bind('command.asset-cdn:empty', EmptyCommand::class);
-
-        $this->commands([
-            'command.asset-cdn:push',
-            'command.asset-cdn:sync',
-            'command.asset-cdn:empty',
-        ]);
+        $this->commands(PushCommand::class);
     }
 }
