@@ -4,11 +4,12 @@ namespace Arubacao\AssetCdn\Commands;
 
 use Illuminate\Http\File;
 use Arubacao\AssetCdn\Finder;
+use Illuminate\Console\Command;
 use Illuminate\Config\Repository;
 use Symfony\Component\Finder\SplFileInfo;
 use Illuminate\Filesystem\FilesystemManager;
 
-class PushCommand extends BaseCommand
+class PushCommand extends Command
 {
     protected $signature = 'asset-cdn:push';
 
