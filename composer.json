@@ -16,6 +16,8 @@
         }
     ],
     "require": {
+        "php": "^8.2",
+        "laravel/framework": "^11.0",
         "superrb/async": "^1.0"
     },
     "require-dev": {
